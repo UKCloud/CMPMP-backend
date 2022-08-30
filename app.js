@@ -19,7 +19,7 @@ var options = {
   password: '${process.env.SESSION_PASSWORD}',
   database: '${process.env.SESSION_DATABASE}'
 };
-// adfawefaer
+
 var sessionStore = new MySQLStore(options);
 
  // added section for express session
@@ -30,7 +30,6 @@ app.use(session({
   cookie: { secure: true,
             maxAge: 2628000000}
 }))
-
 
 
 // view engine setup
