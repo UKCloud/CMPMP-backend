@@ -12,7 +12,7 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-var options = {
+var session_options = {
   host: '${process.env.SESSION_HOST}',
   port: '${process.env.SESSION_PORT}',
   user: '${process.env.SESSION_USER}',
