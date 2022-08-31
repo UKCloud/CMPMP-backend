@@ -1,35 +1,36 @@
 var createError = require('http-errors');
 var express = require('express');
 var session = require('express-session'); 
-var MySQLStore = require('express-mysql-session')(session);   // import and add mysql session by creating a new
+var MySQLStore = require('express-mysql-session')(session);
 var app = module.exports = express();
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
-var session_options = {
-  host: '${process.env.SESSION_HOST}',
-  port: '${process.env.SESSION_PORT}',
-  user: '${process.env.SESSION_USER}',
-  password: '${process.env.SESSION_PASSWORD}',
-  database: '${process.env.SESSION_DATABASE}'
-};
+// getter function for environment variables
+function getOption(varname){
+  return process.env[varname]; 
+}
 
-var sessionStore = new MySQLStore(options);
+console.log(getOption("SESSION_HOST"));
+
+var sessionStore = new MySQLStore(getOption);
 
  // added section for express session
 app.use(session({
-  secret: '${process.env.SESSION_SECRET}',
+  secret: getOption("SESSION_SECRET"),
   resave: false,
   saveUninitialized: true,
   cookie: { secure: true,
             maxAge: 2628000000}
 }))
+
 
 
 // view engine setup
