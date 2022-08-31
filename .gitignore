@@ -1,4 +1,5 @@
-#Gitignore taken from https://github.com/github/gitignore/blob/main/Node.gitignore
+#Gitignore for node taken from https://github.com/github/gitignore/blob/main/Node.gitignore
+#Gitignore for express taken from https://github.com/expressjs/express/blob/master/.gitignore
 
 # Logs
 logs
@@ -130,3 +131,16 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# npm
+node_modules
+package-lock.json
+*.log
+*.gz
+
+# Coveralls
+.nyc_output
+coverage
+
+# Benchmarking
+benchmarks/graphs
