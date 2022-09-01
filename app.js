@@ -21,7 +21,7 @@ let mySQLSessionConfig = {
   database: config.database
  }
  
-  var sessionStore = new expressMySQLSession(mySQLSessionConfig);  
+  
 
     const sessionConfig =
   {
@@ -32,8 +32,16 @@ let mySQLSessionConfig = {
            maxAge: 2628000000}
     };
 
-  if (config.nodeEnv == "production"){ 
-      sessionConfig.store = sessionStore
+  if (config.nodeEnv == "production"){    
+      let mySQLSessionConfig = {
+        host: config.host,
+        port: config.port,
+        user: config.user,
+        password: config.password,
+        database: config.database
+       }
+      var sessionStore = new expressMySQLSession(mySQLSessionConfig);
+      sessionConfig.store = sessionStore;
     };
 
     app.use(session(sessionConfig));
