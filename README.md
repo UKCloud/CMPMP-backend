@@ -28,7 +28,8 @@ The code needed to set up a session:
 
 Config.js file explained:
 This file exports the environment variables from the .env file in a config function, this allows you to use the variables throughout the code. When using those variables you will need to import them on that page using:
-'import { config } from "./config.js" ;'
+`import { config } from "./config.js" ;`
+
 
 ### Running express-session
 Run `npm run dev` to start the express session.
