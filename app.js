@@ -18,8 +18,7 @@ let mySQLSessionConfig = {
   port: config.port,
   user: config.user,
   password: config.password,
-  database: config.database,
-  nodeEnv: config.nodeEnv
+  database: config.database
  }
  
   var sessionStore = new expressMySQLSession(mySQLSessionConfig);  
