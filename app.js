@@ -18,19 +18,28 @@ let mySQLSessionConfig = {
   port: config.port,
   user: config.user,
   password: config.password,
-  database: config.database
+  database: config.database,
+  nodeEnv: config.nodeEnv
  }
  
- var sessionStore = new expressMySQLSession(mySQLSessionConfig);
+  var sessionStore = new expressMySQLSession(mySQLSessionConfig);  
 
- // added section for express session
-app.use(session({
-  secret: config.secret,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true,
-            maxAge: 2628000000}
-}))
+    const sessionConfig =
+  {
+      secret: config.secret,
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: true,
+           maxAge: 2628000000}
+    };
+
+  if (config.nodeEnv == "production"){ 
+      sessionConfig.store = sessionStore
+    };
+
+    app.use(session(sessionConfig));
+  
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
