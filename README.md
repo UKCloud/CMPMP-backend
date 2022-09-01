@@ -2,8 +2,7 @@
 An express session will hold the clients unique data to allow the server to keep track of the user's state. It will save the session ID in the cookie itself.
 
 ### Installations
-To install express-session run `npm install express-session`. 
-To install express-mysql-session run `npm install express-mysql-session`
+When installing packages use `npm install ` and the package name needed to be following after. The main packages needed for express-session are 'express', 'express-session' and 'express-mysql-session.' 
 
 ### Environment Variables
 * SESSION_SECRET: This is the key used for signing and encrypting cookies set by application to mantain session state. It will compute the hash.
@@ -27,11 +26,9 @@ The code needed to set up a session:
 * saveUninitialized: a boolean value,this lets any 'uninitialized' session to be sent to store. 'Uninitialized' means a session that has been created and not modified.
 * cookies: 'maxage' sets the expiry time for cookie. 'secure' is set to 'true' to prevent cookie being available to unauthorized parties.
 
-Code needed for environment variables:
-`function getOption(varname){
-  return process.env[varname]; 
-}`
-This will get the environment variables from the .env file, so they can be used later throughout the code.
+Config.js file explained:
+This file exports the environment variables from the .env file in a config function, this allows you to use the variables throughout the code. When using those variables you will need to import them on that page using:
+'import { config } from "./config.js" ;'
 
 ### Running express-session
 Run `npm run dev` to start the express session.

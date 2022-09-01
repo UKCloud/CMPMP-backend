@@ -1,37 +1,38 @@
-var createError = require('http-errors');
-var express = require('express');
-var session = require('express-session'); 
-var MySQLStore = require('express-mysql-session')(session);
-var app = module.exports = express();
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-require('dotenv').config();
+import { config } from "./config.js" ;
+import createError from 'http-errors';
+import express from 'express';
+import session from 'express-session'; 
+import * as expressSession from 'express-session'; 
+import expressMySQLSession from 'express-mysql-session';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import {indexRouter} from './routes/index.js';
+import {usersRouter} from './routes/users.js';
+import { fileURLToPath } from "url";
+export const app = express();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
-var app = express();
-
-// getter function for environment variables
-function getOption(varname){
-  return process.env[varname]; 
-}
-
-console.log(getOption("SESSION_HOST"));
-
-var sessionStore = new MySQLStore(getOption);
+let mySQLSessionConfig = {
+  host: config.host,
+  port: config.port,
+  user: config.user,
+  password: config.password,
+  database: config.database
+ }
+ 
+ var sessionStore = new expressMySQLSession(mySQLSessionConfig);
 
  // added section for express session
 app.use(session({
-  secret: getOption("SESSION_SECRET"),
+  secret: config.secret,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: true,
             maxAge: 2628000000}
 }))
-
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -62,4 +63,3 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
