@@ -7,5 +7,6 @@ export const config = {
     user: process.env.SESSION_USER,
     password: process.env.SESSION_PASSWORD,
     database: process.env.SESSION_DATABASE,
-    secret: process.env.SESSION_SECRET
+    secret: process.env.SESSION_SECRET,
+    nodeEnv: process.env.NODE_ENV
 }

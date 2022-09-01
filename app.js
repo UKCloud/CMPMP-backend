@@ -1,36 +1,42 @@
-import { config } from "./config.js" ;
+import { config } from "./config.js";
 import createError from 'http-errors';
 import express from 'express';
-import session from 'express-session'; 
-import * as expressSession from 'express-session'; 
+import session from 'express-session';
+import * as expressSession from 'express-session';
 import expressMySQLSession from 'express-mysql-session';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import {indexRouter} from './routes/index.js';
-import {usersRouter} from './routes/users.js';
+import { indexRouter } from './routes/index.js';
+import { usersRouter } from './routes/users.js';
 import { fileURLToPath } from "url";
 export const app = express();
 
-
-let mySQLSessionConfig = {
-  host: config.host,
-  port: config.port,
-  user: config.user,
-  password: config.password,
-  database: config.database
- }
- 
- var sessionStore = new expressMySQLSession(mySQLSessionConfig);
-
- // added section for express session
-app.use(session({
+const sessionConfig = {
   secret: config.secret,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: true,
-            maxAge: 2628000000}
-}))
+  cookie: {
+    secure: true,
+    maxAge: 2628000000
+  }
+};
+
+if (config.nodeEnv == "production") {
+  let mySQLSessionConfig = {
+    host: config.host,
+    port: config.port,
+    user: config.user,
+    password: config.password,
+    database: config.database
+  }
+  var sessionStore = new expressMySQLSession(mySQLSessionConfig);
+  sessionConfig.store = sessionStore;
+};
+
+app.use(session(sessionConfig));
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -48,12 +54,12 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

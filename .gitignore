@@ -144,3 +144,6 @@ coverage
 
 # Benchmarking
 benchmarks/graphs
+
+# DS store files
+.DS_Store
