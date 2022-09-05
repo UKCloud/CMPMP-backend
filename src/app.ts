@@ -1,18 +1,20 @@
 import { config } from "./config.js";
 import createError from 'http-errors';
-import express from 'express';
+import express, {Request, Response, NextFunction} from 'express';
 import session from 'express-session';
 import * as expressSession from 'express-session';
 import expressMySQLSession from 'express-mysql-session';
+import { Options } from 'express-mysql-session';
+
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import { indexRouter } from './routes/index.js';
-import { usersRouter } from './routes/users.js';
-import { fileURLToPath } from "url";
+import { indexRouter } from './routes/index';
+import { usersRouter } from './routes/users';
+
 export const app = express();
 
-const sessionConfig = {
+const sessionConfig:expressSession.SessionOptions = {
   secret: config.secret,
   resave: false,
   saveUninitialized: true,
@@ -23,22 +25,20 @@ const sessionConfig = {
 };
 
 if (config.nodeEnv == "production") {
-  let mySQLSessionConfig = {
+  const mySQLSessionConfig:Options = {
     host: config.host,
     port: config.port,
     user: config.user,
     password: config.password,
     database: config.database
   }
-  var sessionStore = new expressMySQLSession(mySQLSessionConfig);
+  const MySQLStore = expressMySQLSession(expressSession);
+  const sessionStore = new MySQLStore(mySQLSessionConfig);
   sessionConfig.store = sessionStore;
-};
+}
 
 app.use(session(sessionConfig));
 
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -59,7 +59,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err:any, req:Request, res:Response, next:NextFunction) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
