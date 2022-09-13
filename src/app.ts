@@ -12,12 +12,15 @@ import logger from 'morgan';
 import { indexRouter } from './routes/index';
 import { usersRouter } from './routes/users';
 import { loginRouter } from './routes/login';
+import { logoutRouter } from './routes/logout';
+import { oauthCallback } from './routes/oauthCallback';
 
 import csrf from 'csurf';
 
-// export const csrfProtection = csrf({ cookie: true});
+export const csrfProtection = csrf({ cookie: true});
 
 export const app = express();
+
 
 const sessionConfig:expressSession.SessionOptions = {
   secret: config.secret,
@@ -59,12 +62,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/login', loginRouter);
-
-// app.get('/form', csrfProtection, function (req, res) {
-//   // pass the csrfToken to the view
-//   console.log(req.csrfToken());
-//   res.render('send', { csrfToken: req.csrfToken() })
-// })
+app.use('/logout', logoutRouter);
+app.use('/oauthCallback',oauthCallback);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
