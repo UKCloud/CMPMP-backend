@@ -1,6 +1,6 @@
 import { config } from "./config.js";
 import createError from 'http-errors';
-import express, {Request, Response, NextFunction} from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import * as expressSession from 'express-session';
 import expressMySQLSession from 'express-mysql-session';
@@ -13,27 +13,29 @@ import { indexRouter } from './routes/index';
 import { usersRouter } from './routes/users';
 import { loginRouter } from './routes/login';
 import { logoutRouter } from './routes/logout';
-import { oauthCallback } from './routes/oauthCallback';
+import { oauthCallbackRouter } from './routes/oauthCallback';
 
 import csrf from 'csurf';
-
-export const csrfProtection = csrf({ cookie: true});
+import passport from 'passport';
+import { Client, Issuer, Strategy, TokenSet } from "openid-client";
+import cors from 'cors';
+export const csrfProtection = csrf({ cookie: true });
 
 export const app = express();
 
 
-const sessionConfig:expressSession.SessionOptions = {
+const sessionConfig: expressSession.SessionOptions = {
   secret: config.secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: true,
+    secure: false,
     maxAge: 2628000000
   }
 };
 
 if (config.nodeEnv == "production") {
-  const mySQLSessionConfig:Options = {
+  const mySQLSessionConfig: Options = {
     host: config.host,
     port: config.port,
     user: config.user,
@@ -53,31 +55,61 @@ app.set('view engine', 'jade');
 
 
 app.use(logger('dev'));
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(csrf({cookie: true}));
+app.use(csrf({ cookie: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors({ origin: true, credentials: true }));
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
-app.use('/oauthCallback',oauthCallback);
+app.use('/oauth-callback', oauthCallbackRouter);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+export let keycloakClient: Client;
 
-// error handler
-app.use(function (err:any, req:Request, res:Response, next:NextFunction) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+Issuer.discover(config.keycloakRealm).then((issuer) => {
+  keycloakClient = new issuer.Client({
+    client_id: config.clientId,
+    client_secret: config.clientSecret,
+    redirect_uris: [config.redirectURI],
+    post_logout_redirect_uris: [config.logoutRedirectURI],
+    response_types: ['code'],
+  })
+
+  passport.use("oidc", new Strategy({ client: keycloakClient }, (tokenSet: TokenSet, userinfo: unknown, done: (arg0: null, arg1: TokenSet) => unknown) => {
+    return done(null, tokenSet);
+  }));
+
+  passport.serializeUser(function (user: unknown, callback) {
+    callback(null, user);
+  });
+
+  passport.deserializeUser(function (user: Express.User, callback) {
+    callback(null, user);
+  });
+
+  app.use(function (req, res, next) {
+    next(createError(404));
+  });
+
+  // error handler
+  app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  });
+})
+
+
 

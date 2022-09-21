@@ -1,16 +1,16 @@
-import express, {Request, Response, NextFunction} from 'express';
-import qs from 'query-string';
+import express, { Request, Response, NextFunction } from 'express';
 export const logoutRouter = express.Router();
-import { config } from "../config.js";
+import { keycloakClient } from "../app";
 
-logoutRouter.get('/', function(req:Request, res:Response, next:NextFunction) {
-  req.session.destroy(() => {
-    res.json({message:"Logged Out"})
-});
-  const data = qs.stringify({
-    post_logout_redirect_uri: config.logoutRedirectURI ,
-    client_id: process.env.CLIENT_ID
-  })
-  res.redirect(`${process.env.KEYCLOAK_LOGOUT_ENDPOINT}?${data}`)
+logoutRouter.get('/', function (req: Request, res: Response, next: NextFunction) {
+  if (req.user) {
+    const id_token = req.user.id_token;
+    req.logOut({ keepSessionInfo: false }, () => {
+      res.redirect(keycloakClient.endSessionUrl({ id_token_hint: id_token }));
+    })
+  }
+  else {
+    res.redirect('/')
+  }
 });
 
