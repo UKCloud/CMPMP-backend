@@ -19,10 +19,17 @@ import csrf from 'csurf';
 import passport from 'passport';
 import { Client, Issuer, Strategy, TokenSet } from "openid-client";
 import cors from 'cors';
+
+import { User } from "./models/users";
+
 export const csrfProtection = csrf({ cookie: true });
 
 export const app = express();
 
+// Sync the users table with the database
+User.sync({
+  alter: true,
+});
 
 const sessionConfig: expressSession.SessionOptions = {
   secret: config.secret,
@@ -83,8 +90,28 @@ Issuer.discover(config.keycloakRealm).then((issuer) => {
     response_types: ['code'],
   })
 
-  passport.use("oidc", new Strategy({ client: keycloakClient }, (tokenSet: TokenSet, userinfo: unknown, done: (arg0: null, arg1: TokenSet) => unknown) => {
-    return done(null, tokenSet);
+  passport.use("oidc", new Strategy({ client: keycloakClient }, (tokenSet: TokenSet, userinfo: unknown, done: (arg0: null, arg1: TokenSet|null) => unknown) => {
+    const claims = tokenSet.claims()
+    // On login, add the user to the database if they do not exist yet
+    User.findByPk(claims.sub).then((existingUser) => {
+      // If the user does not exist in the DB, add them
+      if (!existingUser) {
+        User.create({
+          sub: claims.sub,
+          name: claims.username,
+          role: "user" // default role for a new user
+        })
+        .then(() => {
+          return done(null, tokenSet);
+        })
+        .catch(() => {
+          return done(null, null);
+        })
+      } else {
+        // If the user does exist, just return the user info to callback
+        return done(null, tokenSet);
+      }
+    })
   }));
 
   passport.serializeUser(function (user: unknown, callback) {
