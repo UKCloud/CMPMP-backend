@@ -1,10 +1,11 @@
 import { config } from "./config.js";
+import { sequelize } from "./database";
+
 import createError from 'http-errors';
 import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import * as expressSession from 'express-session';
-import expressMySQLSession from 'express-mysql-session';
-import { Options } from 'express-mysql-session';
+import SequelizeStore from 'connect-session-sequelize';
 
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -15,14 +16,11 @@ import { loginRouter } from './routes/login';
 import { logoutRouter } from './routes/logout';
 import { oauthCallbackRouter } from './routes/oauthCallback';
 
-import csrf from 'csurf';
 import passport from 'passport';
 import { Client, Issuer, Strategy, TokenSet } from "openid-client";
 import cors from 'cors';
 
 import { User } from "./models/users";
-
-export const csrfProtection = csrf({ cookie: true });
 
 export const app = express();
 
@@ -40,19 +38,11 @@ const sessionConfig: expressSession.SessionOptions = {
     maxAge: 2628000000
   }
 };
-
-if (config.nodeEnv == "production") {
-  const mySQLSessionConfig: Options = {
-    host: config.host,
-    port: config.port,
-    user: config.user,
-    password: config.password,
-    database: config.database
-  }
-  const MySQLStore = expressMySQLSession(expressSession);
-  const sessionStore = new MySQLStore(mySQLSessionConfig);
-  sessionConfig.store = sessionStore;
-}
+// Setup sequelizeStore to use an express Session Store
+const sequelizeStore = SequelizeStore(session.Store)
+const myStore = new sequelizeStore({db: sequelize});
+sessionConfig.store = myStore;
+myStore.sync();
 
 app.use(session(sessionConfig));
 
@@ -62,12 +52,11 @@ app.set('view engine', 'jade');
 
 
 app.use(logger('dev'));
-app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(csrf({ cookie: true }));
+app.use(express.urlencoded());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: true, credentials: true }));
 
