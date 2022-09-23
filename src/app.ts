@@ -98,13 +98,14 @@ Issuer.discover(config.keycloakRealm).then((issuer) => {
       if (!existingUser) {
         User.create({
           sub: claims.sub,
-          name: claims.username,
+          name: claims.preferred_username,
           role: "user" // default role for a new user
         })
         .then(() => {
           return done(null, tokenSet);
         })
         .catch(() => {
+          // Failed to create user in the database
           return done(null, null);
         })
       } else {
