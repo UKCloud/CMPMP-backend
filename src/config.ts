@@ -14,5 +14,7 @@ export const config = {
     clientId: String(process.env.CLIENT_ID),
     clientSecret: String(process.env.CLIENT_SECRET),
     redirectURI: String(process.env.REDIRECT_URI),
-    cmpmpFrontEnd: String(process.env.CMPMP_FRONTEND)
+    cmpmpFrontEnd: String(process.env.CMPMP_FRONTEND),
+    dbEngine: String(process.env.DB_ENGINE || "sqlite"),
+    dbStorage: String(process.env.DB_STORAGE || "db.sqlite"),
 }

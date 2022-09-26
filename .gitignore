@@ -147,3 +147,6 @@ benchmarks/graphs
 
 # DS store files
 .DS_Store
+
+# SQLite Databases
+*.sqlite
