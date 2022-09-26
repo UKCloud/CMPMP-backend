@@ -21,11 +21,15 @@ import { Client, Issuer, Strategy, TokenSet } from "openid-client";
 import cors from 'cors';
 
 import { User } from "./models/users";
+import { Dashboard } from "./models/dashboard";
 
 export const app = express();
 
-// Sync the users table with the database
+// Sync the model tables with the database
 User.sync({
+  alter: true,
+});
+Dashboard.sync({
   alter: true,
 });
 
