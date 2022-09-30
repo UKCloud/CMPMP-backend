@@ -4,40 +4,41 @@ export const dashboardRouter = express.Router();
 
 dashboardRouter.post("/", function (req: Request, res: Response) {
     const createDashboard = {
-        id: req.body.id,
         name: req.body.name,
         data: req.body.data,
     }
-    if (Dashboard.findByPk(req.params.id) != createDashboard.id) {
-        Dashboard.create(createDashboard).then(result => {
-            res.status(200).json({
-                message: "succesfully created",
-                createDashboard: result
-            });
-        }).catch(error => {
-            res.status(500).json({
-                message: "unsuccessful",
-                error: error
+    console.log(req.body.id)
+    Dashboard.findByPk(req.body.id).then(dashboard => {
+        if (dashboard) {
+            dashboard.update(createDashboard).then(result => {
+                // Updates dashboard 
+                res.status(200).json({
+                    message: "succesfully updated",
+                    createDashboard: result
+                });
+            }).catch(error => {
+                res.status(500).json({
+                    message: "unsuccessfully updated",
+                    error: error
+                })
             })
-        });
-    }
-    else if (Dashboard.findByPk(req.params.id) == createDashboard.id) {
-        Dashboard.update(createDashboard).then(result => {
-
-            res.status(200).json({
-                message: "succesfully updated",
-                createDashboard: result
+        } else {
+            // Create dashboards
+            Dashboard.create(createDashboard).then(result => {
+                res.status(200).json({
+                    message: "succesfully created",
+                    createDashboard: result
+                });
+            }).catch(error => {
+                res.status(500).json({
+                    message: "unsuccessfully created",
+                    error: error
+                })
             });
-        }).catch(error => {
-            res.status(500).json({
-                message: "unsuccessful",
-                error: error
-            })
-        })
-    }
+        }
+    })
+    // }
 })
-
-
 
 // GET request to read dashboard ID
 dashboardRouter.get('/:id', function (req: Request, res: Response) {
@@ -53,6 +54,7 @@ dashboardRouter.delete('/:id', function (req: Request, res: Response) {
         createDashboard?.destroy();
     }).then((createDashboard) => {
         res.sendStatus(200);
+
     });
 });
 
