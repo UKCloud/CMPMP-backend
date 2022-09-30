@@ -9,13 +9,14 @@ import SequelizeStore from 'connect-session-sequelize';
 
 import path from 'path';
 import cookieParser from 'cookie-parser';
+// import bodyParser from 'body-parser';
 import logger from 'morgan';
 import { indexRouter } from './routes/index';
 import { usersRouter } from './routes/users';
 import { loginRouter } from './routes/login';
 import { logoutRouter } from './routes/logout';
 import { oauthCallbackRouter } from './routes/oauthCallback';
-// import { dashboardRouter } from './routes/dashboard';
+import { dashboardRouter } from './routes/dashboard';
 
 import passport from 'passport';
 import { Client, Issuer, Strategy, TokenSet } from "openid-client";
@@ -62,6 +63,7 @@ app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
+// app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: true, credentials: true }));
 
@@ -71,7 +73,7 @@ app.use('/users', usersRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/oauth-callback', oauthCallbackRouter);
-// app.use('/dashboard', dashboardRouter);
+app.use('/dashboard', dashboardRouter);
 
 export let keycloakClient: Client;
 
