@@ -15,6 +15,7 @@ import { usersRouter } from './routes/users';
 import { loginRouter } from './routes/login';
 import { logoutRouter } from './routes/logout';
 import { oauthCallbackRouter } from './routes/oauthCallback';
+import { dashboardRouter } from './routes/dashboard';
 
 import passport from 'passport';
 import { Client, Issuer, Strategy, TokenSet } from "openid-client";
@@ -70,6 +71,7 @@ app.use('/users', usersRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/oauth-callback', oauthCallbackRouter);
+app.use('/dashboard', dashboardRouter);
 
 export let keycloakClient: Client;
 
