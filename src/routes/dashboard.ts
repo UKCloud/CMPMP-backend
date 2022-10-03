@@ -11,7 +11,7 @@ dashboardRouter.post("/", function (req: Request, res: Response) {
     Dashboard.findByPk(req.body.id).then(dashboard => {
         if (dashboard) {
             dashboard.update(createDashboard).then(result => {
-                // Updates dashboard 
+                // Updates dashboards 
                 res.status(200).json({
                     message: "succesfully updated",
                     createDashboard: result
@@ -40,12 +40,22 @@ dashboardRouter.post("/", function (req: Request, res: Response) {
     // }
 })
 
-// GET request to read dashboard ID
+// GET all dashboards
+dashboardRouter.get('/', function (req: Request, res: Response) {
+    Dashboard.findAll().then(result => {
+        res.status(200).json({
+            message: "all dashboards",
+            allDashboard: result,
+            
+        });
+    });
+})
+
+// GET request for retrieving dashboard by ID
 dashboardRouter.get('/:id', function (req: Request, res: Response) {
     Dashboard.findByPk(req.params.id).then(Dashboard => res.json(Dashboard));
     console.log(req.params.id);
 });
-
 
 // DELETE request to delete a dashboard
 dashboardRouter.delete('/:id', function (req: Request, res: Response) {
@@ -54,7 +64,6 @@ dashboardRouter.delete('/:id', function (req: Request, res: Response) {
         createDashboard?.destroy();
     }).then((createDashboard) => {
         res.sendStatus(200);
-
     });
 });
 
