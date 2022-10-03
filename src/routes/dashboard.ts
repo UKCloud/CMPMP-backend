@@ -59,8 +59,7 @@ dashboardRouter.get('/:id', function (req: Request, res: Response) {
 
 // DELETE request to delete a dashboard
 dashboardRouter.delete('/:id', function (req: Request, res: Response) {
-    const id = req.params.id;
-    Dashboard.findByPk(id).then(function (createDashboard) {
+    Dashboard.findByPk(req.params.id).then(function (createDashboard) {
         createDashboard?.destroy();
     }).then((createDashboard) => {
         res.sendStatus(200);
