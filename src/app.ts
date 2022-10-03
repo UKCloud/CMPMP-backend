@@ -9,7 +9,6 @@ import SequelizeStore from 'connect-session-sequelize';
 
 import path from 'path';
 import cookieParser from 'cookie-parser';
-// import bodyParser from 'body-parser';
 import logger from 'morgan';
 import { indexRouter } from './routes/index';
 import { usersRouter } from './routes/users';
@@ -63,7 +62,6 @@ app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
-// app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: true, credentials: true }));
 
