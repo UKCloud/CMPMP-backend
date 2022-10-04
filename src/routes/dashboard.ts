@@ -1,8 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
+import { isLoggedIn } from '../middleware/authorisation';
 import { Dashboard } from '../models/dashboard';
 export const dashboardRouter = express.Router();
 
-dashboardRouter.post("/", function (req: Request, res: Response) {
+dashboardRouter.post("/",isLoggedIn, function (req: Request, res: Response) {
     const createDashboard = {
         name: req.body.name,
         data: req.body.data,
@@ -41,7 +42,7 @@ dashboardRouter.post("/", function (req: Request, res: Response) {
 })
 
 // GET all dashboards
-dashboardRouter.get('/', function (req: Request, res: Response) {
+dashboardRouter.get('/',isLoggedIn, function (req: Request, res: Response) {
     Dashboard.findAll().then(result => {
         res.status(200).json({
             message: "all dashboards",
@@ -52,13 +53,13 @@ dashboardRouter.get('/', function (req: Request, res: Response) {
 })
 
 // GET request for retrieving dashboard by ID
-dashboardRouter.get('/:id', function (req: Request, res: Response) {
+dashboardRouter.get('/:id',isLoggedIn, function (req: Request, res: Response) {
     Dashboard.findByPk(req.params.id).then(Dashboard => res.json(Dashboard));
     console.log(req.params.id);
 });
 
 // DELETE request to delete a dashboard
-dashboardRouter.delete('/:id', function (req: Request, res: Response) {
+dashboardRouter.delete('/:id',isLoggedIn, function (req: Request, res: Response) {
     Dashboard.findByPk(req.params.id).then(function (createDashboard) {
         createDashboard?.destroy();
     }).then((createDashboard) => {
