@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
+import DashboardController from '../controllers/dashboard';
 import { isLoggedIn } from '../middleware/authorisation';
 import { Dashboard } from '../models/dashboard';
 export const dashboardRouter = express.Router();
@@ -42,15 +43,12 @@ dashboardRouter.post("/",isLoggedIn, function (req: Request, res: Response) {
 })
 
 // GET all dashboards
-dashboardRouter.get('/',isLoggedIn, function (req: Request, res: Response) {
-    Dashboard.findAll().then(result => {
-        res.status(200).json({
-            message: "all dashboards",
-            allDashboard: result,
-            
-        });
-    });
-})
+dashboardRouter.get('/', isLoggedIn, async function (req: Request, res: Response) {
+    // GET all dashboards
+    const controller = new DashboardController();
+    const response = await controller.getDashboards();
+    return res.json(response);
+});
 
 // GET request for retrieving dashboard by ID
 dashboardRouter.get('/:id',isLoggedIn, function (req: Request, res: Response) {

@@ -1,0 +1,8 @@
+{
+  "entryFile": "src/bin/www.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "spec": {
+    "outputDirectory": "src/public",
+    "specVersion": 3
+  }
+}

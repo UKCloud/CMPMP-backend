@@ -24,6 +24,9 @@ import cors from 'cors';
 import { User } from "./models/users";
 import { Dashboard } from "./models/dashboard";
 
+import swaggerUi from "swagger-ui-express";
+export const swaggerRouter = express.Router();
+
 export const app = express();
 
 // Sync the model tables with the database
@@ -72,6 +75,16 @@ app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/oauth-callback', oauthCallbackRouter);
 app.use('/dashboard', dashboardRouter);
+
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(undefined, {
+    swaggerOptions: {
+      url: "/swagger.json",
+    },
+  })
+);
 
 export let keycloakClient: Client;
 
