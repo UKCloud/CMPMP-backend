@@ -1,7 +1,6 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import DashboardController from '../controllers/dashboard';
 import { isLoggedIn } from '../middleware/authorisation';
-import { Dashboard } from '../models/dashboard';
 export const dashboardRouter = express.Router();
 
 dashboardRouter.post("/",isLoggedIn, async function (req: Request, res: Response) {

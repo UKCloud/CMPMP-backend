@@ -13,4 +13,3 @@ logoutRouter.get('/', function (req: Request, res: Response, next: NextFunction)
     res.redirect('/')
   }
 });
-

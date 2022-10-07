@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 export const usersRouter = express.Router();
-import { keycloakClient } from "../app";
 import UserController from '../controllers/users';
 import { isLoggedIn } from '../middleware/authorisation';
 

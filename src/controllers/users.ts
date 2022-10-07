@@ -1,6 +1,5 @@
-import { Body, Delete, Get, Path, Post, Route, Request } from "tsoa";
+import { Get, Route, Request } from "tsoa";
 import { keycloakClient } from "../app";
-import { User } from "../models/users";
 
 @Route("user")
 export default class UserController {

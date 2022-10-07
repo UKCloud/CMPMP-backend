@@ -146,6 +146,3 @@ Issuer.discover(config.keycloakRealm).then((issuer) => {
     res.render('error');
   });
 })
-
-
-
