@@ -33,8 +33,7 @@ export default class DashboardController {
                 message: "couldn't find dashboard",
                 dashboard: null,
             }
-        }
-        
+        } 
     }
 
     @Delete("/:id")
@@ -48,8 +47,6 @@ export default class DashboardController {
             return [404,{
                 message: "couldn't find dashboard to be deleted"
         }]}
-
-        
     }
 
     @Post("/")
@@ -85,12 +82,6 @@ export default class DashboardController {
                     error: e
                 }]
             }
-
         }
-
-    }
-
-
-    
+    }   
 }
-

@@ -10,7 +10,4 @@ export default class UserController {
         const userInfo = await keycloakClient.introspect(String(req.user?.id_token))
         return userInfo;
     }
-
 }
-
-

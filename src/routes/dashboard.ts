@@ -9,7 +9,6 @@ dashboardRouter.post("/",isLoggedIn, async function (req: Request, res: Response
     const response = await controller.createDashboards(req.body);
     res.status(response[0]);
     return res.json(response[1]);
-    // }
 })
 
 // GET all dashboards
@@ -32,11 +31,4 @@ dashboardRouter.delete('/:id',isLoggedIn, async function (req: Request, res: Res
     const controller = new DashboardController();
     const response = await controller.deleteDashboard(req.params.id);
     return res.json(response);
-    // Dashboard.findByPk(req.params.id).then(function (createDashboard) {
-    //     createDashboard?.destroy();
-    // }).then((createDashboard) => {
-    //     res.sendStatus(200);
-    // });
 });
-
-
