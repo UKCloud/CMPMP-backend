@@ -9,7 +9,7 @@ import {app} from "../app";
 import Debug from 'debug';
 const debug = Debug('cmpmp-backend:server');
 import * as http from 'http';
-import {config} from "../config.js";
+import {config} from "../config";
 import { AddressInfo } from "net";
 
 /**
