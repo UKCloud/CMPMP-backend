@@ -1,4 +1,4 @@
-import { config } from "./config.js";
+import { config } from "./config";
 import { sequelize } from "./database";
 
 import createError from 'http-errors';
