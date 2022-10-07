@@ -3,13 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "clean": "rimraf dist/*",
     "lint": "eslint . --ext .ts",
-    "tsc": "tsc",
-    "copy-assets": "ts-node tools/copyAssets",
-    "start": "node ./dist/bin/www",
-    "build": "npm-run-all clean lint tsc copy-assets",
-    "dev:start": "npm-run-all build start",
+    "start": "ts-node ./src/bin/www",
+    "dev:start": "npm-run-all lint start",
     "dev": "nodemon --watch src -e ts,css --exec npm run dev:start"
   },
   "dependencies": {
@@ -49,8 +45,6 @@
     "fs-extra": "^10.1.0",
     "nodemon": "^2.0.19",
     "npm-run-all": "^4.1.5",
-    "rimraf": "^3.0.2",
-    "shelljs": "^0.8.5",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.2"
   }
