@@ -6,6 +6,9 @@ import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import * as expressSession from 'express-session';
 import SequelizeStore from 'connect-session-sequelize';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import  { PrismaClient } from '@prisma/client';
+
 
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -29,13 +32,13 @@ export const swaggerRouter = express.Router();
 
 export const app = express();
 
-// Sync the model tables with the database
-User.sync({
-  alter: true,
-});
-Dashboard.sync({
-  alter: true,
-});
+// // Sync the model tables with the database
+// User.sync({
+//   alter: true,
+// });
+// Dashboard.sync({
+//   alter: true,
+// });
 
 const sessionConfig: expressSession.SessionOptions = {
   secret: config.secret,
@@ -44,13 +47,25 @@ const sessionConfig: expressSession.SessionOptions = {
   cookie: {
     secure: false,
     maxAge: 2628000000
-  }
+  },
+  store: new PrismaSessionStore(
+    new PrismaClient(),
+    {
+      checkPeriod: 2 * 60 * 1000,  //ms
+        dbRecordIdIsSessionId: true,
+        dbRecordIdFunction: undefined
+    }
+  )
 };
-// Setup sequelizeStore to use an express Session Store
-const sequelizeStore = SequelizeStore(session.Store)
-const myStore = new sequelizeStore({db: sequelize});
-sessionConfig.store = myStore;
-myStore.sync();
+
+
+// // Setup sequelizeStore to use an express Session Store
+// const sequelizeStore = SequelizeStore(session.Store)
+// const myStore = new sequelizeStore({db: sequelize});
+// sessionConfig.store = myStore;
+// myStore.sync();
+
+
 
 app.use(session(sessionConfig));
 

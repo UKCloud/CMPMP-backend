@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model Sessions {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt   DateTime
+}
+
+model Users {
+  sub     Int      @id @default(autoincrement())
+  name    String   
+  role    String  
+  group   String 
+  Dashboards   Dashboards[] 
+}
+
+model Dashboards {
+  id      Int       @id @default(autoincrement())
+  userSub Int?
+  name    String    
+  data    String
+  group   String?
+  Users   Users?    @relation(fields: [userSub], references: [sub])
+}
