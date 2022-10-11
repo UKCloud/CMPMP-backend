@@ -150,3 +150,9 @@ benchmarks/graphs
 
 # SQLite Databases
 *.sqlite
+
+# Prisma files
+prisma/*.db
+prisma/*.db-journal
+prisma/*.sqlite
+prisma/*.sqlite-journal
