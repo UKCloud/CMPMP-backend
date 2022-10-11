@@ -50,6 +50,7 @@
 						}
 					}
 				},
+				"description": "Finds a specified user by their id, using information gained from the express request object.\nReturns the specified user's information",
 				"security": [],
 				"parameters": []
 			}
@@ -67,6 +68,7 @@
 						}
 					}
 				},
+				"description": "Gets all dashboards and returns them",
 				"security": [],
 				"parameters": []
 			},
@@ -82,6 +84,7 @@
 						}
 					}
 				},
+				"description": "Creates a new dashboard using a passed in payload of dashboard information.\nIf the dashboard already exists it updates the existing dashboard (and returns a 500 error if this fails)\nIf it does not exist yet, it creates it and returns a 500 error if this fails",
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -109,6 +112,7 @@
 						}
 					}
 				},
+				"description": "Gets a specific dashboard using it's ID, then returns it",
 				"security": [],
 				"parameters": [
 					{
@@ -133,6 +137,7 @@
 						}
 					}
 				},
+				"description": "Deletes a specified dashboard using it's ID, if it can't find the specified dashboard returns a 404 error.",
 				"security": [],
 				"parameters": [
 					{

@@ -6,7 +6,7 @@
     "lint": "eslint . --ext .ts",
     "start": "ts-node ./src/bin/www",
     "swagger": "tsoa spec",
-    "predev": "npm run swagger",
+    "predev:start": "npm run swagger",
     "prebuild": "npm run swagger",
     "dev:start": "npm-run-all lint start",
     "dev": "nodemon --watch src -e ts,css --exec npm run dev:start"
