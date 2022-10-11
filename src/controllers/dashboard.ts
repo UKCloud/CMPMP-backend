@@ -9,6 +9,10 @@ interface DashboardPayload {
 
 @Route("dashboard")
 export default class DashboardController {
+    /**
+     * Gets all dashboards and returns them
+     * @returns {Promise<any>}
+     */
     @Get("/")
     public async getDashboards(): Promise<any> {
         const result = await Dashboard.findAll()
@@ -18,6 +22,11 @@ export default class DashboardController {
         }
     }
 
+    /**
+     * Gets a specific dashboard using it's ID, then returns it
+     * @param {string} id 
+     * @returns {Promise<any>}
+     */
     @Get("/:id")
     public async findDashboardById(@Path() id: string): Promise<any> {
         const result = await Dashboard.findByPk(id)
@@ -36,6 +45,11 @@ export default class DashboardController {
         } 
     }
 
+    /**
+     * Deletes a specified dashboard using it's ID, if it can't find the specified dashboard returns a 404 error.
+     * @param {string} id 
+     * @returns {Promise<any>}
+     */
     @Delete("/:id")
     public async deleteDashboard(@Path() id: string): Promise<any> {
         const result = await Dashboard.findByPk(id);
@@ -49,6 +63,13 @@ export default class DashboardController {
         }]}
     }
 
+    /**
+     * Creates a new dashboard using a passed in payload of dashboard information.
+     * If the dashboard already exists it updates the existing dashboard (and returns a 500 error if this fails)
+     * If it does not exist yet, it creates it and returns a 500 error if this fails
+     * @param {DashboardPayload} payload 
+     * @returns {Promise<any>}
+     */
     @Post("/")
     public async createDashboards(@Body() payload: DashboardPayload): Promise<any> {
 
