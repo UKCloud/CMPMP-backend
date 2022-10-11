@@ -17,12 +17,16 @@
 					},
 					"data": {
 						"type": "string"
+					},
+					"group": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"id",
 					"name",
-					"data"
+					"data",
+					"group"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -70,7 +74,36 @@
 				},
 				"description": "Gets all dashboards and returns them",
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"description": "ID of a dashboard",
+						"in": "query",
+						"name": "id",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "Name of a dashboard",
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "Find dashboards within a group",
+						"in": "query",
+						"name": "group",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			},
 			"post": {
 				"operationId": "CreateDashboards",

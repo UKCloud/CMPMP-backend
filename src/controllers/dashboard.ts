@@ -1,24 +1,33 @@
-import { Body, Delete, Get, Path, Post, Route } from "tsoa";
+import { Body, Delete, Get, Path, Post, Route, Query } from "tsoa";
 
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient()
-interface DashboardPayload {
+export interface DashboardPayload {
     id: number,
     name: string,
     data: string
+    group: string
 }
 
 @Route("dashboard")
 export default class DashboardController {
     /**
      * Gets all dashboards and returns them
-     * @returns {Promise<any>}
+     * @param {number} id ID of a dashboard 
+     * @param {number} name Name of a dashboard 
+     * @param {number} group Find dashboards within a group
      */
     @Get("/")
-    public async getDashboards(): Promise<any> {
-        const result = await prisma.dashboards.findMany()
+    public async getDashboards(@Query() id?:number, @Query() name?: string, @Query() group?:string): Promise<any> {
+        
+        if (id) id = Number(id);
+        const result = await prisma.dashboards.findMany({where: {
+            id: id,
+            name: name,
+            group: group
+        }})
         return {
-            message: "all dashboards",
+            message: result.length > 0 ? "all dashboards" : "no dashboards found",
             allDashboard: result,
         }
     }

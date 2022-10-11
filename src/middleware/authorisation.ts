@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { use } from "passport";
 const prisma = new PrismaClient()
 
-export const isLoggedIn = (req:Request, res:Response, next:NextFunction) => {
+export const isLoggedIn = (req:Request<unknown,unknown,unknown,unknown>, res:Response, next:NextFunction) => {
   // Check if there is a user associated with this session
   if (req.isAuthenticated()) {
     return next();

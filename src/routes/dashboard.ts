@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import DashboardController from '../controllers/dashboard';
+import DashboardController, { DashboardPayload } from '../controllers/dashboard';
 import { isLoggedIn } from '../middleware/authorisation';
 export const dashboardRouter = express.Router();
 
@@ -11,10 +11,10 @@ dashboardRouter.post("/",isLoggedIn, async function (req: Request, res: Response
 })
 
 // GET all dashboards
-dashboardRouter.get('/', isLoggedIn, async function (req: Request, res: Response) {
+dashboardRouter.get('/', isLoggedIn, async function (req: Request<unknown,unknown,unknown,DashboardPayload>, res: Response) {
     // GET all dashboards
     const controller = new DashboardController();
-    const response = await controller.getDashboards();
+    const response = await controller.getDashboards(req.query.id, req.query.name, req.query.group);
     return res.json(response);
 });
 
