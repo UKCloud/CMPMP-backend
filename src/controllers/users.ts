@@ -1,7 +1,7 @@
 import { Get, Route, Request } from "tsoa";
 import { keycloakClient } from "../app";
 
-@Route("user")
+@Route("users")
 export default class UserController {
 
     /**
