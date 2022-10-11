@@ -9,7 +9,7 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-model Session {
+model session {
   id        String   @id
   sid       String   @unique
   data      String
@@ -17,16 +17,16 @@ model Session {
 }
 
 model Users {
-  sub     Int      @id @default(autoincrement())
+  sub     String      @id 
   name    String   
   role    String  
-  group   String 
+  group   String? 
   Dashboards   Dashboards[] 
 }
 
 model Dashboards {
   id      Int       @id @default(autoincrement())
-  userSub Int?
+  userSub String?
   name    String    
   data    String
   group   String?

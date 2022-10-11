@@ -1,6 +1,7 @@
 import { Body, Delete, Get, Path, Post, Route } from "tsoa";
-import { Dashboard } from "../models/dashboard";
 
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient()
 interface DashboardPayload {
     id: number,
     name: string,
@@ -11,7 +12,7 @@ interface DashboardPayload {
 export default class DashboardController {
     @Get("/")
     public async getDashboards(): Promise<any> {
-        const result = await Dashboard.findAll()
+        const result = await prisma.dashboards.findMany()
         return {
             message: "all dashboards",
             allDashboard: result,
@@ -20,7 +21,11 @@ export default class DashboardController {
 
     @Get("/:id")
     public async findDashboardById(@Path() id: string): Promise<any> {
-        const result = await Dashboard.findByPk(id)
+        const result = await prisma.dashboards.findUnique({
+            where : {
+                id:Number(id) 
+            }
+        })
         if(result){
             return {
                 message: "dashboard by id",
@@ -38,10 +43,16 @@ export default class DashboardController {
 
     @Delete("/:id")
     public async deleteDashboard(@Path() id: string): Promise<any> {
-        const result = await Dashboard.findByPk(id);
+        const result = await prisma.dashboards.delete({
+            where : {
+                id:Number(id) 
+            }
+        });
         if(result){
-        result.destroy();
-        }
+        // result.destroy();
+        return [200,{
+            message: "dashboard deleted"
+        }]}
         else
         {
             return [404,{
@@ -52,10 +63,19 @@ export default class DashboardController {
     @Post("/")
     public async createDashboards(@Body() payload: DashboardPayload): Promise<any> {
 
-        const dashboard = await Dashboard.findByPk(payload.id)
+        const dashboard = await prisma.dashboards.findUnique({
+            where : {
+                id: payload.id
+            }
+        })
         if (dashboard) {
             try {
-                const result = await dashboard.update(payload)
+                const result = await prisma.dashboards.update({
+                    where : {
+                        id : payload.id
+                    },
+                    data : payload
+                })
                 return [200, {
                     message: "succesfully updated",
                     createDashboard: result,
@@ -70,7 +90,9 @@ export default class DashboardController {
         }
         else{
             try{
-                const result = await Dashboard.create({name: payload.name, data: payload.data})
+                const result = await prisma.dashboards.create({
+                    data : payload
+                })
                 return [200, {
                     message: "successfully created dashboard",
                     createDashboard: result,

@@ -1,14 +1,10 @@
 import { config } from "./config";
-import { sequelize } from "./database";
-
 import createError from 'http-errors';
 import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import * as expressSession from 'express-session';
-import SequelizeStore from 'connect-session-sequelize';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import  { PrismaClient } from '@prisma/client';
-
+import { PrismaClient } from '@prisma/client';
 
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -24,21 +20,11 @@ import passport from 'passport';
 import { Client, Issuer, Strategy, TokenSet } from "openid-client";
 import cors from 'cors';
 
-import { User } from "./models/users";
-import { Dashboard } from "./models/dashboard";
-
 import swaggerUi from "swagger-ui-express";
 export const swaggerRouter = express.Router();
 
 export const app = express();
-
-// // Sync the model tables with the database
-// User.sync({
-//   alter: true,
-// });
-// Dashboard.sync({
-//   alter: true,
-// });
+const prisma = new PrismaClient()
 
 const sessionConfig: expressSession.SessionOptions = {
   secret: config.secret,
@@ -52,20 +38,11 @@ const sessionConfig: expressSession.SessionOptions = {
     new PrismaClient(),
     {
       checkPeriod: 2 * 60 * 1000,  //ms
-        dbRecordIdIsSessionId: true,
-        dbRecordIdFunction: undefined
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined
     }
   )
 };
-
-
-// // Setup sequelizeStore to use an express Session Store
-// const sequelizeStore = SequelizeStore(session.Store)
-// const myStore = new sequelizeStore({db: sequelize});
-// sessionConfig.store = myStore;
-// myStore.sync();
-
-
 
 app.use(session(sessionConfig));
 
@@ -78,7 +55,7 @@ app.use(logger('dev'));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: true, credentials: true }));
@@ -113,24 +90,32 @@ Issuer.discover(config.keycloakRealm).then((issuer) => {
     response_types: ['code'],
   })
 
-  passport.use("oidc", new Strategy({ client: keycloakClient }, (tokenSet: TokenSet, userinfo: unknown, done: (arg0: null, arg1: TokenSet|null) => unknown) => {
+  passport.use("oidc", new Strategy({ client: keycloakClient }, (tokenSet: TokenSet, userinfo: unknown, done: (arg0: null, arg1: TokenSet | null) => unknown) => {
     const claims = tokenSet.claims()
     // On login, add the user to the database if they do not exist yet
-    User.findByPk(claims.sub).then((existingUser) => {
+    prisma.users.findUnique({
+    where: {
+      sub: claims.sub
+    }
+    
+    }).then((existingUser) => {
       // If the user does not exist in the DB, add them
       if (!existingUser) {
-        User.create({
-          sub: claims.sub,
-          name: claims.preferred_username,
-          role: "user" // default role for a new user
+        prisma.users.create({
+          data: {
+            sub: claims.sub,
+            name: claims.preferred_username || "",
+            role: "user" // default role for a new user
+          }
+
         })
-        .then(() => {
-          return done(null, tokenSet);
-        })
-        .catch(() => {
-          // Failed to create user in the database
-          return done(null, null);
-        })
+          .then(() => {
+            return done(null, tokenSet);
+          })
+          .catch(() => {
+            // Failed to create user in the database
+            return done(null, null);
+          })
       } else {
         // If the user does exist, just return the user info to callback
         return done(null, tokenSet);

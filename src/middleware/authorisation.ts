@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express"
 import { keycloakClient } from "../app";
-import { User } from "../models/users";
+import { PrismaClient } from '@prisma/client';
+import { use } from "passport";
+const prisma = new PrismaClient()
 
 export const isLoggedIn = (req:Request, res:Response, next:NextFunction) => {
   // Check if there is a user associated with this session
@@ -17,11 +19,16 @@ export const isAuthorised = (requiredRole:string) => {
       // Get user info using the session access token
       keycloakClient.introspect(String(req.user?.id_token)).then((userInfo) => {
         // Lookup the user in the users table, using the SID primary key
-        User.findByPk(userInfo.sub).then((user) => {
+        prisma.users.findUnique({
+          where :{
+            sub : userInfo.sub
+          }
+        }).then((user) => {
           // Check if the user's role matches the required role
-          if (user?.get('role') == requiredRole) {
+          if (user?.role == requiredRole){
             return next();
-          } else {
+          } 
+          else {
             // If it does not, return not permitted JSON response
             return res.status(403).json({status:"Not permitted"});
           }
