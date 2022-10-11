@@ -14,7 +14,7 @@ dashboardRouter.post("/",isLoggedIn, async function (req: Request, res: Response
 dashboardRouter.get('/', isLoggedIn, async function (req: Request<unknown,unknown,unknown,DashboardPayload>, res: Response) {
     // GET all dashboards
     const controller = new DashboardController();
-    const response = await controller.getDashboards(req.query.id, req.query.name, req.query.group);
+    const response = await controller.getDashboards(req.query.id, req.query.name, req.query.group, req.query.userSub);
     return res.json(response);
 });
 

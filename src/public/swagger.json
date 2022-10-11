@@ -20,13 +20,17 @@
 					},
 					"group": {
 						"type": "string"
+					},
+					"userSub": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"id",
 					"name",
 					"data",
-					"group"
+					"group",
+					"userSub"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -41,7 +45,7 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/user": {
+		"/users": {
 			"get": {
 				"operationId": "FindUserById",
 				"responses": {
@@ -98,6 +102,15 @@
 						"description": "Find dashboards within a group",
 						"in": "query",
 						"name": "group",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "Find dashboards based on a user's sub property",
+						"in": "query",
+						"name": "userSub",
 						"required": false,
 						"schema": {
 							"type": "string"

@@ -7,6 +7,7 @@ export interface DashboardPayload {
     name: string,
     data: string
     group: string
+    userSub: string
 }
 
 @Route("dashboard")
@@ -16,15 +17,16 @@ export default class DashboardController {
      * @param {number} id ID of a dashboard 
      * @param {string} name Name of a dashboard 
      * @param {string} group Find dashboards within a group
+     * @param {string} userSub Find dashboards based on a user's sub property
      */
     @Get("/")
-    public async getDashboards(@Query() id?:number, @Query() name?: string, @Query() group?:string): Promise<any> {
-        
+    public async getDashboards(@Query() id?:number, @Query() name?: string, @Query() group?:string, @Query() userSub?:string): Promise<any> {
         if (id) id = Number(id);
         const result = await prisma.dashboards.findMany({where: {
             id: id,
             name: name,
-            group: group
+            group: group,
+            userSub: userSub
         }})
         return {
             message: result.length > 0 ? "all dashboards" : "no dashboards found",
