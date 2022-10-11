@@ -14,8 +14,8 @@ export default class DashboardController {
     /**
      * Gets all dashboards and returns them
      * @param {number} id ID of a dashboard 
-     * @param {number} name Name of a dashboard 
-     * @param {number} group Find dashboards within a group
+     * @param {string} name Name of a dashboard 
+     * @param {string} group Find dashboards within a group
      */
     @Get("/")
     public async getDashboards(@Query() id?:number, @Query() name?: string, @Query() group?:string): Promise<any> {
